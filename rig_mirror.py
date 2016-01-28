@@ -22,7 +22,6 @@
 #
 #  ***** END GPL LICENSE BLOCK *****
 
-
 import bpy
 
 def main():
@@ -36,11 +35,11 @@ def main():
         bpy.ops.armature.select_all(action='DESELECT')
         bone_collection = bpy.context.object.data.edit_bones
         mylength = len(bone_collection)
-        # Only want to copy bones that aren't at x=y=0 (rel to armature origin)
+        # Only want to copy bones that aren't at x=0 (rel to armature origin)
         for old_bone in bone_collection[0:mylength]:
             #print("bone head (x,y) is (" + str(old_bone.head[0]) + "," + str(old_bone.head[1]) + ")")
-            if not (old_bone.head[0] == old_bone.head[1] == old_bone.tail[0] == old_bone.tail[1] == 0):
-                #print(old_bone.name + " is not on the armature's z axis so copy and rename it.")
+            if not (old_bone.head[0] == old_bone.tail[0] == 0):
+                #print(old_bone.name + " is not on the armature's line of symmetry so copy and rename it.")
                 # Check for a pre-existing symmetry suffix on the original bones.
                 #I think a dict may be nicer here...
                 prefix = old_bone.name[:-2]
@@ -69,7 +68,7 @@ def main():
                 #new_bone.select = True
                 # Currently aligns the roll of each new bone so the bone's z-axis points in the -y direction
                 # May want to just do this to all bones instead of just the new ones on creation?
-                # Or set the roll of each bone the negative of the one it's copied from. ****
+                # **** Or set the roll of each bone the negative of the one it's copied from. ****
                 new_bone.align_roll((0, -1, 0))
 
 
