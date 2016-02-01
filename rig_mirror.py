@@ -24,6 +24,33 @@
 
 import bpy
 
+# Constant stuff
+
+# Dict of complementary name suffixes.
+suffixes = {".L":".R", ".R":".L", ".l":".r", ".r":".l"}
+
+#Helper functions
+
+def fixnames(old_bone):
+    # Check for a pre-existing symmetry suffix on the original bones.
+    prefix = old_bone.name[:-2]
+    suffix = old_bone.name[-2:]
+
+    new_suffix = suffixes.get(suffix)
+    #if new_suffix != None: print(new_suffix)
+    if new_suffix == None:
+        print("No side indication found in name")
+        # Assume it's the lhs that's been constructed even if not labelled
+        prefix = old_bone.name
+        old_bone.name = prefix + ".L"
+        new_suffix = ".R"
+
+    new_name = prefix + new_suffix
+    print(old_bone.name)
+    print(new_name)
+    return new_name
+
+
 def main():
 
     # Get the active object's name (the armature we're working on, one hopes)
@@ -40,28 +67,9 @@ def main():
             print("bone head (x,y) is (" + str(old_bone.head[0]) + "," + str(old_bone.head[1]) + ")")
             if not (old_bone.head[0] == old_bone.tail[0] == 0):
                 print(old_bone.name + " is not on the armature's line of symmetry so copy and rename it.")
-                # Check for a pre-existing symmetry suffix on the original bones.
-                #I think a dict may be nicer here...
-                prefix = old_bone.name[:-2]
-                suffix = old_bone.name[-2:]
-                if suffix == ".L":
-                    new_suffix = ".R"
-                elif suffix == ".R":
-                    new_suffix = ".L"
-                elif suffix == ".l":
-                    new_suffix = ".r"
-                elif suffix == ".r":
-                    new_suffix = ".l"
-                else: # Assume it's the lhs that's been constructed even if not labelled
-                    prefix = old_bone.name
-                    old_bone.name = prefix + ".L"
-                    new_suffix = ".R"
-
-                new_bone_name = prefix + new_suffix
-                print(old_bone.name)
-                print(new_bone_name)
 
                 # Add the new bone with the name mirrored
+                new_bone_name = fixnames(old_bone)
                 bone_collection.new(new_bone_name)
                 new_bone = bpy.context.object.data.edit_bones[new_bone_name]
 
