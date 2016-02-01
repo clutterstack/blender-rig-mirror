@@ -37,9 +37,9 @@ def main():
         mylength = len(bone_collection)
         # Only want to copy bones that aren't at x=0 (rel to armature origin)
         for old_bone in bone_collection[0:mylength]:
-            #print("bone head (x,y) is (" + str(old_bone.head[0]) + "," + str(old_bone.head[1]) + ")")
+            print("bone head (x,y) is (" + str(old_bone.head[0]) + "," + str(old_bone.head[1]) + ")")
             if not (old_bone.head[0] == old_bone.tail[0] == 0):
-                #print(old_bone.name + " is not on the armature's line of symmetry so copy and rename it.")
+                print(old_bone.name + " is not on the armature's line of symmetry so copy and rename it.")
                 # Check for a pre-existing symmetry suffix on the original bones.
                 #I think a dict may be nicer here...
                 prefix = old_bone.name[:-2]
@@ -53,25 +53,25 @@ def main():
                 elif suffix == ".r":
                     new_suffix = ".l"
                 else: # Assume it's the lhs that's been constructed even if not labelled
+                    prefix = old_bone.name
+                    old_bone.name = prefix + ".L"
                     new_suffix = ".R"
-                    old_bone.name = old_bone.name + ".L"
 
                 new_bone_name = prefix + new_suffix
+                print(old_bone.name)
+                print(new_bone_name)
 
                 # Add the new bone with the name mirrored
                 bone_collection.new(new_bone_name)
                 new_bone = bpy.context.object.data.edit_bones[new_bone_name]
 
-                # Need to set this bone's position.
+                # Set this bone's position.
                 new_bone.head = Vector((-old_bone.head[0], old_bone.head[1], old_bone.head[2]))
                 new_bone.tail = Vector((-old_bone.tail[0], old_bone.tail[1], old_bone.tail[2]))
                 #new_bone.select = True
-                # Currently aligns the roll of each new bone so the bone's z-axis points in the -y direction
-                # May want to just do this to all bones instead of just the new ones on creation?
-                # **** Or set the roll of each bone the negative of the one it's copied from. ****
-                new_bone.align_roll((0, -1, 0))
 
-
+                # Set its roll to negative (x-mirror) of the original's.
+                new_bone.roll = -old_bone.roll
 
         bpy.context.scene.update() # To show what we've done in the viewport
 
