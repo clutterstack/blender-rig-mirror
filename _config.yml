@@ -4,7 +4,7 @@ email: clutterstack@users.noreply.github.com
 description: # a > character means to ignore newlines until "baseurl:"
   On the process of writing an add-on for Blender in Python.
 baseurl: "/blender-rig-mirror" # the subpath of your site, e.g. /blog/
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "http://clutterstack.github.io" # the base hostname & protocol for your site
 github_username:  clutterstack
 
 # Build settings
