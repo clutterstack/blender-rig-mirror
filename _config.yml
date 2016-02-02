@@ -5,7 +5,6 @@ description: # a > character means to ignore newlines until "baseurl:"
   On the process of writing an add-on for Blender in Python.
 baseurl: "/blender-rig-mirror" # the subpath of your site, e.g. /blog/
 url: "http://yourdomain.com" # the base hostname & protocol for your site
-#twitter_username: beepily
 github_username:  clutterstack
 
 # Build settings
