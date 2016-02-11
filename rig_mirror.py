@@ -24,6 +24,11 @@
 
 import bpy
 
+# Dict of complementary name suffixes.
+suffixes = {".L":".R", ".R":".L", ".l":".r", ".r":".l"}
+
+
+
 # Helper function(s)
 
 def setnames(old_bone):
@@ -54,9 +59,6 @@ def main():
     # Check that the active object is indeed an armature:
     if bpy.context.active_object.type == 'ARMATURE':
 
-        # Dict of complementary name suffixes.
-        suffixes = {".L":".R", ".R":".L", ".l":".r", ".r":".l"}
-
         # Initialize an empty list to hold the names of created bones.
         new_bone_names = []
 
@@ -66,7 +68,7 @@ def main():
         bpy.ops.armature.select_all(action='DESELECT')
         bone_collection = bpy.context.object.data.edit_bones
         numbones = len(bone_collection)
-        
+
         # Only want to copy bones that aren't at x=0 (rel to armature origin)
         for old_bone in bone_collection[0:numbones]:
             print("bone head (x,y) is (" + str(old_bone.head[0]) + "," + str(old_bone.head[1]) + ")")
