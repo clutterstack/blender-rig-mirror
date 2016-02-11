@@ -46,3 +46,9 @@ To re-run the script, the second line can be accessed from the console's history
 ## Getting going on my script
 
 I began by building a simple one-sided partial armature to test my code on: a spine, a detached clavicle, and a left arm. The chain of bones begins at the base of the spine, which is in the default orientation (*y* up, *z* forward, *x* to the right). I saved the .blend file so the original can be recovered after the script messes around with it.
+
+Then I put the line
+```
+import bpy
+```
+at the top of an empty text file (which I saved with a .py extension), and started playing around with commands, in a combination of one-liners in the console and cumulative actions in the script file.
