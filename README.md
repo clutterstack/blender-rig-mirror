@@ -3,7 +3,7 @@
 
 ## Current features
 
-**The blender-rig-mirror script currently doesn't set up any parenting or any constraints on the new bones, so can't be considered particularly useful relative to mirroring the armature during creation.**
+**The blender-rig-mirror script currently doesn't set up any constraints on the new bones.**
 
 This script currently assumes:
 
