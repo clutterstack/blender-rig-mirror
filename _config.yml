@@ -1,5 +1,5 @@
 # Site settings
-title: Writing a Blender Addon for the First Time
+title: Writing blender-rig-mirror, a Blender Add-on
 email: clutterstack@users.noreply.github.com
 description: # a > character means to ignore newlines until "baseurl:"
   On the process of writing an add-on for Blender in Python.
