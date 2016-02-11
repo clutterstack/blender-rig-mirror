@@ -11,7 +11,7 @@ The first was the response by prolific Stack Exchange user TLousky to [this ques
 
 The other result was a Blender add-on called [Pose Mirror](https://developer.blender.org/T36334) by Connor Simpson. It looks as though it copies all the constraints and parameters, making no changes, unless the constraint has a target, in which case it does switch the target to the corresponding object on the correct side.
 
-Neither of the above scripts properly mirrors the Limit Rotation constraints that my human rig is full of, so I decided to look into writing something myself.
+Neither of the above scripts properly mirrors the Limit Rotation constraints that my human rig is full of, so I decided to look into writing something myself. This work-in-progress is called [blender-rig-mirror](https://github.com/clutterstack/blender-rig-mirror). Check the README for its current state; as of this writing it's not a polished product.
 
 ## First steps
 
@@ -60,9 +60,7 @@ import bpy
 
 it's ready to go. Commands that can be entered into the console can just as easily be run from the .py file. Because I was still feeling my way around, I played around with commands, in a combination of one-liners in the console and cumulative actions in the script file. It's quite satisfying watching even the simplest changes happening to an object in the 3D view as a result of a typed command.
 
-Soon the script began doing some of the things I want my add-on to do.
-
-This work-in-progress is called [blender-rig-mirror](https://github.com/clutterstack/blender-rig-mirror). Check the README for its current state; as of this writing it's not a polished product.
+Soon, the script began doing some of the things I want my add-on to do. At the time of writing, it doesn't do everything, and it's not in add-on format yet.
 
 ### Licensing
 
