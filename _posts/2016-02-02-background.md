@@ -7,7 +7,7 @@ title: Background
 
 While exploring armature building in Blender, I searched for an easy way to mirror bone constraints from one side of the rig to the other. There are two easy-to-find candidates.
 
-The first I hit upon was the response by prolific Stack Exchange user TLousky to [this question] (http://blender.stackexchange.com/questions/41709/how-to-copy-constraints-from-one-bone-to-another). The script ran all right on my armature, but some of the constraint parameters were not as I'd expect for my rig and my constraints. This script was posted in response to a question about constraints on bones used to control shape keys, so it's worth checking out for that use case.
+The first I hit upon was the response by prolific Stack Exchange user TLousky to [this question](http://blender.stackexchange.com/questions/41709/how-to-copy-constraints-from-one-bone-to-another) about copying constraints on bones used to control facial shape keys. The script ran all right on my armature, but some of the constraint parameters were not as I'd expect for my humanoid body rig and constraints.
 
 The other result was a Blender add-on called [Pose Mirror](https://developer.blender.org/T36334) dating from 2013 by Connor Simpson. It looks as though it copies all the constraints and parameters, making no changes, unless the constraint has a target, in which case it does switch the target to the corresponding bone on the correct side. I haven't tested this aspect.
 
@@ -23,20 +23,26 @@ There is quite an illuminating [Gotchas](https://www.blender.org/api/blender_pyt
 ## Scripting within Blender
 
 
-Blender's interface makes a lot of effort to be friendly to those wanting to try scripting:
+Blender's developers have given a lot of effort and thought into making scripting accessible through features of the interface:
 
-* There are text editor and Python console modes available for the window panels ("[Areas](https://www.blender.org/manual/interface/window_system/arranging_areas.html)").
+* There are **Text Editor** and **Python Console** modes available for the window panels ("[Areas](https://www.blender.org/manual/interface/window_system/arranging_areas.html)").
 
-* The default "Info" mode of the top area, if expanded a little, shows recent commands executed through the GUI.
+* The default **Info** mode of the top area, if expanded a little, shows recent commands executed through the GUI.
 
-* Hovering over buttons in the GUI pops up not only the usual explanation of the button's action, but also the relevant Python operator or attributes.
+* Hovering over buttons in the GUI pops up not only a standard tooltip, but also the relevant Python operator or attributes.
 
-* Where appropriate, the context-aware options `Copy Data Path`, `Edit Source`, `Online Manual`, and `Online Python Reference` (targeted to the relevant entries) are available through the button's right-click context menu.
+* Where appropriate, options **Copy Data Path**, **Edit Source**, **Online Manual**, and **Online Python Reference** (targeted to the relevant entries) are available through the button's right-click context menu.
 
-Where appropriate, it gives the option to the option of copying the text of the attribute, and also of opening (and editing if you wish) the source code for the relevant module!
+Commands can be entered directly into the Python console (which I placed in the top area of the default layout, in place of the **Info** panel). Scripts can be run from a text editor panel within Blender, but I find it more comfortable to use a standalone text editor like GitHub's [Atom](atom.github.io) (or see the [Wikipedia entry](https://en.wikipedia.org/wiki/Atom_(text_editor)). In this case it's convenient to enter the following in the console:
+```
+filename = "/full/path/to/myscript.py"
+exec(compile(open(filename).read(), filename, 'exec'))
+```
 
+The above is found in the [Tips and Tricks](https://www.blender.org/api/blender_python_api_current/info_tips_and_tricks.html) section of the current docs; it's perhaps worth looking into every doc linked under the [**Blender/Python Documentation**](https://www.blender.org/api/blender_python_api_current/contents.html#blender-python-documentation) heading!
 
+To re-run the script, the second line can be accessed from the console's history using the up arrow.
 
-In the default Blender layout, the top panel shows
+## Getting going on my script
 
-I began by building a one-sided partial armature: just a spine, a detached clavicle and an arm. I saved this as a .blend file for easy access.
+I began by building a simple one-sided partial armature to test my code on: a spine, a detached clavicle, and a left arm. The chain of bones begins at the base of the spine, which is in the default orientation (*y* up, *z* forward, *x* to the right). I saved the .blend file so the original can be recovered after the script messes around with it.
