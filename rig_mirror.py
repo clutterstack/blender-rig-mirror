@@ -27,8 +27,6 @@ import bpy
 # Dict of complementary name suffixes.
 suffixes = {".L":".R", ".R":".L", ".l":".r", ".r":".l"}
 
-
-
 # Helper function(s)
 
 def setnames(old_bone):

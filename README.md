@@ -1,5 +1,5 @@
 # blender-rig-mirror
-**Unfinished** addon to create a full rig from half a rig
+**Unfinished** addon to create a full armature from a one-sided half-armature in Blender.
 
 ## Current features
 
@@ -25,11 +25,14 @@ If there is no such suffix on the original bone names, the script currently assu
 
 ## Running this script
 
-From https://www.blender.org/api/blender_python_api_2_59_2/info_tips_and_tricks.html (didn't find it in the newest API pages but it still works for me in Blender 2.76 on Mac OSX):
 While this is still just a script and not an addon, it can be run using
 
 ```
 filename = "/full/path/to/blender-rig-mirror.py"
+```
+
+```
 exec(compile(open(filename).read(), filename, 'exec'))
 ```
-in the Blender Python console.
+
+in Blender's Python console (from https://www.blender.org/api/blender_python_api_current/info_tips_and_tricks.html).
