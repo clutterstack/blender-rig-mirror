@@ -28,6 +28,34 @@ import bpy
 suffixes = {".L":".R", ".R":".L", ".l":".r", ".r":".l"}
 
 # Helper function(s)
+def rename_old_bones(existing_bones):
+    '''If a bone's head is at x <>0, and its name has no side indicator,
+    this function will give it a .L or .R ending'''
+    for bone in existing_bones:
+        suffix = bone.name[-2:]
+        new_suffix = suffixes.get(suffix)
+        if not new_suffix: # i.e. wasn't one of the dict keys
+            #print("No side indication found in name")
+            # Assume it's the lhs that's been constructed even if not labelled
+            print("Bone " + bone.name + " didn't have a .L/.l or .R/.r suffix")
+            prefix = bone.name
+            if bone.head[0] > 0: # bone head is on the LHS
+                bone.name = prefix + ".L"
+            elif bone.head[0] < 0: # bone head is on the RHS
+                bone.name = prefix + ".R"
+
+
+def check_name_conflict(existing_bones):
+    '''Checks all the names we want to use for mirrored bones against
+    existing bone names.'''
+    bone_names = [bone.name for bone in existing_bones]
+    for bone in existing_bones:
+        if get_mirrored_name(bone) in bone_names:
+            print("There is a naming conflict with an existing bone")
+            return True
+        else:
+            print("No naming conflict")
+            return False
 
 def setnames(old_bone):
     '''Returns a name for a new bone, indicating the bone it mirrors and the side it's on.
@@ -37,18 +65,21 @@ def setnames(old_bone):
     suffix = old_bone.name[-2:]
 
     new_suffix = suffixes.get(suffix)
-
-    if not new_suffix: # i.e. wasn't one of the dict keys
-        print("No side indication found in name")
-        # Assume it's the lhs that's been constructed even if not labelled
-        prefix = old_bone.name
-        old_bone.name = prefix + ".L"
-        new_suffix = ".R"
-
     new_name = prefix + new_suffix
-    print(old_bone.name)
-    print(new_name)
+    #print(old_bone.name)
+    #print(new_name)
     return new_name
+
+
+def get_mirrored_name(bone):
+    prefix = bone.name[:-2]
+    suffix = bone.name[-2:]
+    new_suffix = suffixes.get(suffix)
+    if new_suffix:
+        mirrored_name = prefix + new_suffix
+        return mirrored_name
+    else:
+        print("The original bone doesn't have a side suffix")
 
 
 def main():
@@ -65,54 +96,59 @@ def main():
         # Deselect all bones in the armature
         bpy.ops.armature.select_all(action='DESELECT')
         bone_collection = bpy.context.object.data.edit_bones
-        numbones = len(bone_collection)
+        #numbones = len(bone_collection)
 
-        # Only want to copy bones that aren't at x=0 (rel to armature origin)
-        for old_bone in bone_collection[0:numbones]:
-            print("bone head (x,y) is (" + str(old_bone.head[0]) + "," + str(old_bone.head[1]) + ")")
-            if not (old_bone.head[0] == old_bone.tail[0] == 0):
-                print(old_bone.name + " is not on the armature's line of symmetry, so copy it, and rename if appropriate.")
+        side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
 
-                # Add the new bone with the name mirrored, using the function setnames() defined above.
-                new_bone_name = setnames(old_bone)
-                bone_collection.new(new_bone_name)
+        rename_old_bones(side_bones)
 
-                new_bone = bpy.context.object.data.edit_bones[new_bone_name]
+        # Stop if there are already any bones matching names we will give to new bones;
+        # this may mean that the armature is already symmetric, or some other complication.
+        if check_name_conflict(side_bones) == False:
 
-                # Make a list of the new bones in case we need to go into pose mode for the constraints.
-                new_bone_names.append(new_bone_name)
+            # Only want to copy bones that aren't at x=0 (rel to armature origin)
+            for old_bone in side_bones:
+                    # print(old_bone.name + " is not on the armature's line of symmetry, so copy it, and rename if appropriate.")
+                    print("Mirroring " + old_bone.name)
+                    # Add the new bone with the name mirrored
+                    new_bone_name = get_mirrored_name(old_bone)
+                    bone_collection.new(new_bone_name)
+                    new_bone = bpy.context.object.data.edit_bones[new_bone_name]
+                    print("Adding new bone called " + new_bone_name)
 
-                # Set this bone's position.
-                new_bone.head = Vector((-old_bone.head[0], old_bone.head[1], old_bone.head[2]))
-                new_bone.tail = Vector((-old_bone.tail[0], old_bone.tail[1], old_bone.tail[2]))
+                    # Make a list of the new bones in case we need to go into pose mode for the constraints.
+                    new_bone_names.append(new_bone_name)
 
-                # Set its roll to negative (x-mirror) of the original's.
-                new_bone.roll = -old_bone.roll
+                    # Set this bone's position.
+                    new_bone.head = Vector((-old_bone.head[0], old_bone.head[1], old_bone.head[2]))
+                    new_bone.tail = Vector((-old_bone.tail[0], old_bone.tail[1], old_bone.tail[2]))
 
-                # If the old bone's parent has a left/right suffix, then the new bone's
-                # parent should be the mirror complement of the old bone's parent.
+                    # Set its roll to negative (x-mirror) of the original's.
+                    new_bone.roll = -old_bone.roll
 
-                old_parent_prefix = old_bone.parent.name[:-2]
-                old_parent_ending = old_bone.parent.name[-2:]
-                print(old_parent_ending)
+                    # If the old bone's parent has a left/right suffix, then the new bone's
+                    # parent should be the mirror complement of the old bone's parent.
+                    old_parent_prefix = old_bone.parent.name[:-2]
+                    old_parent_ending = old_bone.parent.name[-2:]
+                    print("The old bone's parent is " + old_bone.parent.name)
 
-                new_parent_suffix = suffixes.get(old_parent_ending)
+                    new_parent_suffix = suffixes.get(old_parent_ending)
 
-                if new_parent_suffix:
-                    print("Parent is on one side")
-                    new_parent_name = old_parent_prefix + new_parent_suffix
-                else:
-                    print("Parent is at the centre")
-                    new_parent_name = old_bone.parent.name
+                    if new_parent_suffix:
+                        print("Parent is on one side")
+                        new_parent_name = old_parent_prefix + new_parent_suffix
+                    else:
+                        print("Parent is at the centre")
+                        new_parent_name = old_bone.parent.name
 
-                new_bone.parent = bpy.context.object.data.edit_bones[new_parent_name]
-
-                # Want the new bone to be connected to its parent if the old one was.
-                if old_bone.use_connect: new_bone.use_connect = True
-
-        bpy.context.scene.update() # To show what we've done in the viewport
-        print(new_bone_names)
-        # At this point, I think we need to go to pose mode and loop again.
+                    new_bone.parent = bpy.context.object.data.edit_bones[new_parent_name]
+                    print("New bone's parent is " + new_parent_name)
+                    # Want the new bone to be connected to its parent if the old one was.
+                    if old_bone.use_connect: new_bone.use_connect = True
+                    print("")
+            bpy.context.scene.update() # To show what we've done in the viewport
+            #print(new_bone_names)
+            # At this point, I think we need to go to pose mode and loop again.
 
     else: print("The active object isn't an armature.")
 
