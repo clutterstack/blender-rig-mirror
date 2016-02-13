@@ -7,8 +7,8 @@
 
 This script currently assumes:
 
-1. The centre-line bones plus (only) all the bones to one side of the armature have been created.
-2. The rig is meant to be symmetric across the y-z plane (along the x axis).
+1. The centre-line bones plus (only) all the bones you want to mirror have been created.
+2. The rig is meant to be symmetric across the *y-z* plane (along the x axis).
 
 From these starting data, it does the following for each bone not on the armature's plane of symmetry:
 
@@ -21,7 +21,9 @@ From these starting data, it does the following for each bone not on the armatur
 
 So far, the script is sophisticated enough to check for a ".L", ".l", ".R", or ".r" suffix on the off-axis bones. If it finds one of these, it will give the new bone's name the appropriate "opposite-side" suffix. For example, if the original bone names end in ".L", the new ones will end in ".R".
 
-If there is no such suffix on the original bone names, the script currently assumes the bones are on the armature's left-hand side (positive x) and will add ".L" suffixes to their names, then give the new bones ".R" suffixes.
+If there is no such suffix on the original off-center bone names, the script checks which side of the *y-z* plane the bone originates (where its head is located) and gives it either a ".L" or a ".R" name ending.
+
+If any bones exist with names that conflict with the names it plans to give to mirrored bones, the script will not continue.
 
 ## Running this script
 
