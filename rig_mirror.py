@@ -101,7 +101,9 @@ def main():
         side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
 
         rename_old_bones(side_bones)
-
+        '''At this point could use bpy.ops.armature.symmetrize() in edit mode with all bones selected;
+        then could move on to constraints. Don't know what's faster or fits in better; may want to do
+        bone roll or something alone as a GUI button or checkmark, so maybe better to keep it modular'''
         # Stop if there are already any bones matching names we will give to new bones;
         # this may mean that the armature is already symmetric, or some other complication.
         if check_name_conflict(side_bones) == False:
@@ -128,19 +130,23 @@ def main():
 
                     # If the old bone's parent has a left/right suffix, then the new bone's
                     # parent should be the mirror complement of the old bone's parent.
-                    old_parent_prefix = old_bone.parent.name[:-2]
-                    old_parent_ending = old_bone.parent.name[-2:]
-                    print("The old bone's parent is " + old_bone.parent.name)
-
-                    new_parent_suffix = suffixes.get(old_parent_ending)
-
-                    if new_parent_suffix:
-                        print("Parent is on one side")
-                        new_parent_name = old_parent_prefix + new_parent_suffix
-                    else:
-                        print("Parent is at the centre")
+                    new_parent_name = get_mirrored_name(old_bone.parent)
+                    if not new_parent_name:
                         new_parent_name = old_bone.parent.name
 
+                    # old_parent_prefix = old_bone.parent.name[:-2]
+                    # old_parent_ending = old_bone.parent.name[-2:]
+                    # print("The old bone's parent is " + old_bone.parent.name)
+                    #
+                    # new_parent_suffix = suffixes.get(old_parent_ending)
+                    #
+                    # if new_parent_suffix:
+                    #     print("Parent is on one side")
+                    #     new_parent_name = old_parent_prefix + new_parent_suffix
+                    # else:
+                    #     print("Parent is at the centre")
+                    #     new_parent_name = old_bone.parent.name
+                    #
                     new_bone.parent = bpy.context.object.data.edit_bones[new_parent_name]
                     print("New bone's parent is " + new_parent_name)
                     # Want the new bone to be connected to its parent if the old one was.
