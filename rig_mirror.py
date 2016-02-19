@@ -128,20 +128,6 @@ class RigMirror(bpy.types.Operator):
                 print("No naming conflict")
                 return False
 
-    def setnames(self, old_bone):
-        '''Returns a name for a new bone, indicating the bone it mirrors and the side it's on.
-        Also gives the original bone a side designation if it had none.'''
-        # Check for a pre-existing symmetry suffix on the original bones.
-        prefix = old_bone.name[:-2]
-        suffix = old_bone.name[-2:]
-
-        new_suffix = self.suffixes.get(suffix)
-        new_name = prefix + new_suffix
-        #print(old_bone.name)
-        #print(new_name)
-        return new_name
-
-
     def get_mirrored_name(self, bone):
         prefix = bone.name[:-2]
         suffix = bone.name[-2:]
