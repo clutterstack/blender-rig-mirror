@@ -31,14 +31,14 @@ class RigMirror(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'} # Enable undo
 
 
-# Dict of complementary name suffixes.
+    # Dict of complementary name suffixes.
     suffixes = {".L":".R", ".R":".L", ".l":".r", ".r":".l"}
 
     def execute(self, context):
 
         # Get the active object's name (the armature we're working on, one hopes)
         # Check that the active object is indeed an armature:
-        if bpy.context.active_object.type == 'ARMATURE':
+        if context.active_object.type == 'ARMATURE':
 
             # Initialize an empty list to hold the names of created bones.
             new_bone_names = []
@@ -47,7 +47,7 @@ class RigMirror(bpy.types.Operator):
             bpy.ops.object.mode_set(mode='EDIT')
             # Deselect all bones in the armature
             bpy.ops.armature.select_all(action='DESELECT')
-            bone_collection = bpy.context.object.data.edit_bones
+            bone_collection = context.object.data.edit_bones
             #numbones = len(bone_collection)
 
             side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
@@ -67,7 +67,7 @@ class RigMirror(bpy.types.Operator):
                         # Add the new bone with the name mirrored
                         new_bone_name = self.get_mirrored_name(old_bone)
                         bone_collection.new(new_bone_name)
-                        new_bone = bpy.context.object.data.edit_bones[new_bone_name]
+                        new_bone = context.object.data.edit_bones[new_bone_name]
                         print("Adding new bone called " + new_bone_name)
 
                         # Make a list of the new bones in case we need to go into pose mode for the constraints.
@@ -86,12 +86,12 @@ class RigMirror(bpy.types.Operator):
                         if not new_parent_name:
                             new_parent_name = old_bone.parent.name
 
-                        new_bone.parent = bpy.context.object.data.edit_bones[new_parent_name]
+                        new_bone.parent = context.object.data.edit_bones[new_parent_name]
                         print("New bone's parent is " + new_parent_name)
                         # Want the new bone to be connected to its parent if the old one was.
                         if old_bone.use_connect: new_bone.use_connect = True
                         print("")
-                bpy.context.scene.update() # To show what we've done in the viewport
+                context.scene.update() # To show what we've done in the viewport
                 #print(new_bone_names)
                 # At this point, I think we need to go to pose mode and loop again.
 
