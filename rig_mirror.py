@@ -53,46 +53,17 @@ class RigMirror(bpy.types.Operator):
             side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
 
             self.rename_old_bones(side_bones)
-            '''At this point could use bpy.ops.armature.symmetrize() in edit mode with all bones selected;
-            then could move on to constraints. Don't know what's faster or fits in better; may want to do
-            bone roll or something alone as a GUI button or checkmark, so maybe better to keep it modular'''
+
             # Stop if there are already any bones matching names we will give to new bones;
             # this may mean that the armature is already symmetric, or some other complication.
             if self.check_name_conflict(side_bones) == False:
 
-                # Only want to copy bones that aren't at x=0 (rel to armature origin)
-                for old_bone in side_bones:
-                        # print(old_bone.name + " is not on the armature's line of symmetry, so copy it, and rename if appropriate.")
-                        print("Mirroring " + old_bone.name)
-                        # Add the new bone with the name mirrored
-                        new_bone_name = self.get_mirrored_name(old_bone)
-                        bone_collection.new(new_bone_name)
-                        new_bone = context.object.data.edit_bones[new_bone_name]
-                        print("Adding new bone called " + new_bone_name)
-
-                        # Make a list of the new bones in case we need to go into pose mode for the constraints.
-                        new_bone_names.append(new_bone_name)
-
-                        # Set this bone's position.
-                        new_bone.head = Vector((-old_bone.head[0], old_bone.head[1], old_bone.head[2]))
-                        new_bone.tail = Vector((-old_bone.tail[0], old_bone.tail[1], old_bone.tail[2]))
-
-                        # Set its roll to negative (x-mirror) of the original's.
-                        new_bone.roll = -old_bone.roll
-
-                        # If the old bone's parent has a left/right suffix, then the new bone's
-                        # parent should be the mirror complement of the old bone's parent.
-                        new_parent_name = self.get_mirrored_name(old_bone.parent)
-                        if not new_parent_name:
-                            new_parent_name = old_bone.parent.name
-
-                        new_bone.parent = context.object.data.edit_bones[new_parent_name]
-                        print("New bone's parent is " + new_parent_name)
-                        # Want the new bone to be connected to its parent if the old one was.
-                        if old_bone.use_connect: new_bone.use_connect = True
-                        print("")
+                '''At this point can use bpy.ops.armature.symmetrize() in edit mode with all bones selected.'''
+                # Select all bones. This assumes there's only a half armature. So did the code I wrote before.
+                bpy.ops.armature.select_all(action='SELECT')
+                bpy.ops.armature.symmetrize()
                 context.scene.update() # To show what we've done in the viewport
-                #print(new_bone_names)
+
                 # At this point, I think we need to go to pose mode and loop again.
 
         else: print("The active object isn't an armature.")
@@ -127,20 +98,6 @@ class RigMirror(bpy.types.Operator):
             else:
                 print("No naming conflict")
                 return False
-
-    def setnames(self, old_bone):
-        '''Returns a name for a new bone, indicating the bone it mirrors and the side it's on.
-        Also gives the original bone a side designation if it had none.'''
-        # Check for a pre-existing symmetry suffix on the original bones.
-        prefix = old_bone.name[:-2]
-        suffix = old_bone.name[-2:]
-
-        new_suffix = self.suffixes.get(suffix)
-        new_name = prefix + new_suffix
-        #print(old_bone.name)
-        #print(new_name)
-        return new_name
-
 
     def get_mirrored_name(self, bone):
         prefix = bone.name[:-2]
