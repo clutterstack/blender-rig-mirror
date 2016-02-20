@@ -51,7 +51,8 @@ class RigMirror(bpy.types.Operator):
             print(len(bone_collection))
 
             side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
-
+            # Can use bpy.ops.armature.autoside_names(type='XAXIS')
+            # instead of the following:
             self.rename_old_bones(side_bones)
 
             # Stop if there are already any bones matching names we will give to new bones;
@@ -64,17 +65,11 @@ class RigMirror(bpy.types.Operator):
                 bpy.ops.armature.symmetrize()
                 context.scene.update() # To show what we've done in the viewport
 
-
-                # Need to distinguish new bones from old bones.
-                print(len(bone_collection))
-                print(len(context.object.data.edit_bones))
-                new_bones = set(context.object.data.edit_bones) - set(bone_collection)
-                print(new_bones)
-                # Could just make a list of the selected bones since the new ones are selected
-                # after the symmetrize operation.
-
-                # Next I think we need to go to pose mode and loop again.
+                # Next we need to manipulate constraints in pose mode.
                 bpy.ops.object.mode_set(mode='POSE')
+
+                # The symmetrize() operation left the new bones all selected.
+                new_bones = list(context.selected_pose_bones)
 
                 [self.mirror_constraints(bone) for bone in new_bones]
 
@@ -122,11 +117,12 @@ class RigMirror(bpy.types.Operator):
             print("The original bone doesn't have a side suffix")
 
     def mirror_constraints(self, bone):
-        
-        # for each constraint on bone's parent,
-        #check if it's a limit rotation constraint.
+        print(bone.name)
+
+        # for each constraint on bone's counterpart,
+        # check if it's a limit rotation constraint.
         # look at notes to decide what the limits should be like.
-        #For now, ignore all other kinds of constraints.
+        # For now, ignore all other kinds of constraints.
         # location should be easy,
 
         # IK would be very interesting to have.
