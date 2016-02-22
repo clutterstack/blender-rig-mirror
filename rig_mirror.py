@@ -48,10 +48,11 @@ class RigMirror(bpy.types.Operator):
             # Deselect all bones in the armature
             bpy.ops.armature.select_all(action='DESELECT')
             bone_collection = list(context.object.data.edit_bones) # Now it's a copy
-            print(len(bone_collection))
+            #print(len(bone_collection))
 
             side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
-            # Can use bpy.ops.armature.autoside_names(type='XAXIS')
+            # IF we wanted to insist on capital L/R to indicate sides, could
+            # simply use bpy.ops.armature.autoside_names(type='XAXIS')
             # instead of the following:
             self.rename_old_bones(side_bones)
 
@@ -69,8 +70,13 @@ class RigMirror(bpy.types.Operator):
                 bpy.ops.object.mode_set(mode='POSE')
 
                 # The symmetrize() operation left the new bones all selected.
+                # Will we need this list? Or just unselect all?
                 new_bones = list(context.selected_pose_bones)
-
+                bpy.ops.pose.select_all(action='DESELECT')
+                #pose_bone_collection = list(context.object.pose.bones)
+                #print(pose_bone_collection)
+                #side_pose_bones = [context.object.pose.bones[bone.name] for bone in side_bones]
+                #[print(bone.name) for bone in side_pose_bones]
                 [self.mirror_constraints(bone) for bone in new_bones]
 
         else: print("The active object isn't an armature.")
@@ -117,7 +123,24 @@ class RigMirror(bpy.types.Operator):
             print("The original bone doesn't have a side suffix")
 
     def mirror_constraints(self, bone):
+        # Only has to change limits depending on how thorough the symmetrize
+        # operation was with constraints. This could be pretty simple if the IK targets
+        # are already taken care of.
+
+        # I think this is going to be much different from (and easier than)
+        # what I'd originally planned, because the armature symmetrize operation already
+        # does half the work.
         print(bone.name)
+        # bone is the one to copy the constraint from.
+        for constraint in bone.constraints:
+            print(constraint)
+            #if it's limit rotation, want to:
+
+                # Keep x min and max the same
+
+                # ymin should be negative of orig bone's ymax.
+
+
 
         # for each constraint on bone's counterpart,
         # check if it's a limit rotation constraint.
