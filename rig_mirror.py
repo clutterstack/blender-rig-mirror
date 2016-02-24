@@ -49,8 +49,10 @@ class RigMirror(bpy.types.Operator):
             bpy.ops.armature.select_all(action='DESELECT')
             bone_collection = context.object.data.edit_bones
             #numbones = len(bone_collection)
-
-            side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
+            epsilon = 0.00001
+            side_bones = [bone for bone in bone_collection if not (bone.head[0] < epsilon and bone.tail[0] < epsilon )]
+            for bone in side_bones:
+                print(bone.name)
 
             self.rename_old_bones(side_bones)
             '''At this point could use bpy.ops.armature.symmetrize() in edit mode with all bones selected;
@@ -108,7 +110,7 @@ class RigMirror(bpy.types.Operator):
             if not new_suffix: # i.e. wasn't one of the dict keys
                 #print("No side indication found in name")
                 # Assume it's the lhs that's been constructed even if not labelled
-                print("Bone " + bone.name + " didn't have a .L/.l or .R/.r suffix")
+                print("Bone " + bone.name + " has head at " + str(bone.head) + " and tail at " + str(bone.tail) + " and didn't have a .L/.l or .R/.r suffix")
                 prefix = bone.name
                 if bone.head[0] > 0: # bone head is on the LHS
                     bone.name = prefix + ".L"
