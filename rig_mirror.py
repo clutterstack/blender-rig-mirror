@@ -51,6 +51,8 @@ class RigMirror(bpy.types.Operator):
             #print(len(bone_collection))
             epsilon = 0.00001
             side_bones = [bone for bone in bone_collection if not (bone.head[0] < epsilon and bone.tail[0] < epsilon)]
+
+            # Need bones to have side extensions on names:
             self.rename_old_bones(side_bones)
 
             # Stop if there are already any bones matching names we will give to new bones;
@@ -58,7 +60,7 @@ class RigMirror(bpy.types.Operator):
             if self.check_name_conflict(side_bones) == False:
                 print("no naming conflicts at all")
                 '''At this point can use bpy.ops.armature.symmetrize() in edit mode with all bones selected.'''
-                # Select all bones. This assumes there's only a half armature. So did the code I wrote before.
+                # Select all bones.
                 bpy.ops.armature.select_all(action='SELECT')
                 bpy.ops.armature.symmetrize()
                 context.scene.update() # To show what we've done in the viewport
@@ -137,15 +139,11 @@ class RigMirror(bpy.types.Operator):
 
                 # ymin should be negative of orig bone's ymax.
 
-
-
         # for each constraint on bone's counterpart,
         # check if it's a limit rotation constraint.
         # look at notes to decide what the limits should be like.
         # For now, ignore all other kinds of constraints.
-        # location should be easy,
-
-        # IK would be very interesting to have.
+        # limit location should be easy, IK may not even need modification
 
 
 # Register the operator class so it can be used in Blender
