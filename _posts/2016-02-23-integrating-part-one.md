@@ -13,6 +13,8 @@ Most of the information in this post comes from the [Operator(bpy_struct)](https
 
 After `import bpy`, everything that was in the original Python script now goes into the definition of a new class inheriting from `bpy.types.Operator`. Some rearrangement will be needed, which is described below.
 
+Start the class definition:
+
 ```
 class RigMirror(bpy.types.Operator):
 ```
@@ -45,7 +47,7 @@ To fit them into the form of an operator class, I made the following adaptations
 
 * Renamed `main()` to `execute(self, context)` and gave it the return value `FINISHED` -- actually, a set containing only `'FINISHED'`.
 
-* As pointed out in the [Addon Tutorial]((https://www.blender.org/api/blender_python_api_current/info_tutorial_addon.html), the context is passed to the `execute()` method, so `bpy.context.` inside the method becomes simply `context.`
+* As pointed out in the [Addon Tutorial]((https://www.blender.org/api/blender_python_api_current/info_tutorial_addon.html), because the context is passed to the `execute()` method, `bpy.context.` inside the method becomes simply `context.`
 
 * Since my functions are now methods defined within the class, calls to them need `self.` at the start.
 
@@ -67,4 +69,4 @@ bpy.ops.object.rig_mirror()
 
 Now the script does exactly the same thing as it did before, except that (i) the operator remains available from within Blender, by typing in 'Rig Mirror' in the spacebar search field, and (ii) it will be a lot simpler to convert it into an add-on when the time comes.
 
-I will keep it in this form for the moment, since it is about to undergo some considerable changes in and it's simple to re-run it for testing.
+I will keep it in this form for the moment, since it is about to undergo some considerable changes in and it's currently very quick and simple to re-run it for testing.
