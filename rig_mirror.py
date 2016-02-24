@@ -49,17 +49,18 @@ class RigMirror(bpy.types.Operator):
             bpy.ops.armature.select_all(action='DESELECT')
             bone_collection = list(context.object.data.edit_bones) # Now it's a copy
             #print(len(bone_collection))
+            epsilon = 0.00001
+            side_bones = [bone for bone in bone_collection if not (bone.head[0] < epsilon and bone.tail[0] < epsilon)]
 
-            side_bones = [bone for bone in bone_collection if not (bone.head[0] == bone.tail[0] == 0)]
             # IF we wanted to insist on capital L/R to indicate sides, could
             # simply use bpy.ops.armature.autoside_names(type='XAXIS')
             # instead of the following:
-            self.rename_old_bones(side_bones)
+            #self.rename_old_bones(side_bones)
 
             # Stop if there are already any bones matching names we will give to new bones;
             # this may mean that the armature is already symmetric, or some other complication.
             if self.check_name_conflict(side_bones) == False:
-
+                print("no naming conflicts at all")
                 '''At this point can use bpy.ops.armature.symmetrize() in edit mode with all bones selected.'''
                 # Select all bones. This assumes there's only a half armature. So did the code I wrote before.
                 bpy.ops.armature.select_all(action='SELECT')
@@ -84,7 +85,7 @@ class RigMirror(bpy.types.Operator):
 
     # Helper function(s)
     def rename_old_bones(self, existing_bones):
-        '''If a bone's head is at x <>0, and its name has no side indicator,
+        '''If a bone's head is at x <> 0, and its name has no side indicator,
         this function will give it a .L or .R ending'''
         for bone in existing_bones:
             suffix = bone.name[-2:]
