@@ -47,62 +47,41 @@ class RigMirror(bpy.types.Operator):
             bpy.ops.object.mode_set(mode='EDIT')
             # Deselect all bones in the armature
             bpy.ops.armature.select_all(action='DESELECT')
-            bone_collection = context.object.data.edit_bones
-            #numbones = len(bone_collection)
+            bone_collection = list(context.object.data.edit_bones) # Now it's a copy
+            #print(len(bone_collection))
             epsilon = 0.00001
-            side_bones = [bone for bone in bone_collection if not (bone.head[0] < epsilon and bone.tail[0] < epsilon )]
-            for bone in side_bones:
-                print(bone.name)
-
+            side_bones = [bone for bone in bone_collection if not (bone.head[0] < epsilon and bone.tail[0] < epsilon)]
             self.rename_old_bones(side_bones)
-            '''At this point could use bpy.ops.armature.symmetrize() in edit mode with all bones selected;
-            then could move on to constraints. Don't know what's faster or fits in better; may want to do
-            bone roll or something alone as a GUI button or checkmark, so maybe better to keep it modular'''
+
             # Stop if there are already any bones matching names we will give to new bones;
             # this may mean that the armature is already symmetric, or some other complication.
             if self.check_name_conflict(side_bones) == False:
-
-                # Only want to copy bones that aren't at x=0 (rel to armature origin)
-                for old_bone in side_bones:
-                        # print(old_bone.name + " is not on the armature's line of symmetry, so copy it, and rename if appropriate.")
-                        print("Mirroring " + old_bone.name)
-                        # Add the new bone with the name mirrored
-                        new_bone_name = self.get_mirrored_name(old_bone)
-                        bone_collection.new(new_bone_name)
-                        new_bone = context.object.data.edit_bones[new_bone_name]
-                        print("Adding new bone called " + new_bone_name)
-
-                        # Make a list of the new bones in case we need to go into pose mode for the constraints.
-                        new_bone_names.append(new_bone_name)
-
-                        # Set this bone's position.
-                        new_bone.head = Vector((-old_bone.head[0], old_bone.head[1], old_bone.head[2]))
-                        new_bone.tail = Vector((-old_bone.tail[0], old_bone.tail[1], old_bone.tail[2]))
-
-                        # Set its roll to negative (x-mirror) of the original's.
-                        new_bone.roll = -old_bone.roll
-
-                        # If the old bone's parent has a left/right suffix, then the new bone's
-                        # parent should be the mirror complement of the old bone's parent.
-                        new_parent_name = self.get_mirrored_name(old_bone.parent)
-                        if not new_parent_name:
-                            new_parent_name = old_bone.parent.name
-
-                        new_bone.parent = context.object.data.edit_bones[new_parent_name]
-                        print("New bone's parent is " + new_parent_name)
-                        # Want the new bone to be connected to its parent if the old one was.
-                        if old_bone.use_connect: new_bone.use_connect = True
-                        print("")
+                print("no naming conflicts at all")
+                '''At this point can use bpy.ops.armature.symmetrize() in edit mode with all bones selected.'''
+                # Select all bones. This assumes there's only a half armature. So did the code I wrote before.
+                bpy.ops.armature.select_all(action='SELECT')
+                bpy.ops.armature.symmetrize()
                 context.scene.update() # To show what we've done in the viewport
-                #print(new_bone_names)
-                # At this point, I think we need to go to pose mode and loop again.
+
+                # Next we need to manipulate constraints in pose mode.
+                bpy.ops.object.mode_set(mode='POSE')
+
+                # The symmetrize() operation left the new bones all selected.
+                # Will we need this list? Or just unselect all?
+                new_bones = list(context.selected_pose_bones)
+                bpy.ops.pose.select_all(action='DESELECT')
+                #pose_bone_collection = list(context.object.pose.bones)
+                #print(pose_bone_collection)
+                #side_pose_bones = [context.object.pose.bones[bone.name] for bone in side_bones]
+                #[print(bone.name) for bone in side_pose_bones]
+                [self.mirror_constraints(bone) for bone in new_bones]
 
         else: print("The active object isn't an armature.")
         return {'FINISHED'}
 
     # Helper function(s)
     def rename_old_bones(self, existing_bones):
-        '''If a bone's head is at x <>0, and its name has no side indicator,
+        '''If a bone's head is at x <> 0, and its name has no side indicator,
         this function will give it a .L or .R ending'''
         for bone in existing_bones:
             suffix = bone.name[-2:]
@@ -139,6 +118,35 @@ class RigMirror(bpy.types.Operator):
             return mirrored_name
         else:
             print("The original bone doesn't have a side suffix")
+
+    def mirror_constraints(self, bone):
+        # Only has to change limits depending on how thorough the symmetrize
+        # operation was with constraints. This could be pretty simple if the IK targets
+        # are already taken care of.
+
+        # I think this is going to be much different from (and easier than)
+        # what I'd originally planned, because the armature symmetrize operation already
+        # does half the work.
+        print(bone.name)
+        # bone is the one to copy the constraint from.
+        for constraint in bone.constraints:
+            print(constraint)
+            #if it's limit rotation, want to:
+
+                # Keep x min and max the same
+
+                # ymin should be negative of orig bone's ymax.
+
+
+
+        # for each constraint on bone's counterpart,
+        # check if it's a limit rotation constraint.
+        # look at notes to decide what the limits should be like.
+        # For now, ignore all other kinds of constraints.
+        # location should be easy,
+
+        # IK would be very interesting to have.
+
 
 # Register the operator class so it can be used in Blender
 bpy.utils.register_class(RigMirror)
