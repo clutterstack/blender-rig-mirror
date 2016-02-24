@@ -69,4 +69,4 @@ bpy.ops.object.rig_mirror()
 
 Now the script does exactly the same thing as it did before, except that (i) the operator remains available from within Blender, by typing in 'Rig Mirror' in the spacebar search field, and (ii) it will be a lot simpler to convert it into an add-on when the time comes.
 
-I will keep it in this form for the moment, since it is about to undergo some considerable changes in and it's currently very quick and simple to re-run it for testing.
+I will keep it in this form for the moment, since it is about to undergo some considerable changes, and it's currently very quick and simple to re-run it for testing.
