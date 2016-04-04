@@ -83,7 +83,7 @@ class RigMirror(bpy.types.Operator):
 
     # Helper function(s)
     def rename_old_bones(self, existing_bones):
-        '''If a bone's head is at x <> 0, and its name has no side indicator,
+        '''If a bone's tail is at x <> 0, and its name has no side indicator,
         this function will give it a .L or .R ending'''
         for bone in existing_bones:
             suffix = bone.name[-2:]
@@ -93,9 +93,9 @@ class RigMirror(bpy.types.Operator):
                 # Assume it's the lhs that's been constructed even if not labelled
                 print("Bone " + bone.name + " has head at " + str(bone.head) + " and tail at " + str(bone.tail) + " and didn't have a .L/.l or .R/.r suffix")
                 prefix = bone.name
-                if bone.head[0] > 0: # bone head is on the LHS
+                if bone.tail[0] > 0: # bone tail is on the LHS
                     bone.name = prefix + ".L"
-                elif bone.head[0] < 0: # bone head is on the RHS
+                elif bone.tail[0] < 0: # bone tail is on the RHS
                     bone.name = prefix + ".R"
 
 

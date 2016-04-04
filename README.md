@@ -3,11 +3,9 @@
 
 ## Current features
 
-**The blender-rig-mirror script currently doesn't set up any constraints on the new bones.**
-
 This script currently assumes:
 
-1. The centre-line bones plus (only) all the bones you want to mirror have been created (although it now skips any bone whose mirror-complement name is held by an existing bone).
+1. The centre-line bones plus (only) all the bones you want to mirror have been created (it does skip any bone whose mirror-complement name is held by an existing bone).
 2. The rig is meant to be symmetric across the *y-z* plane (along the *x* axis).
 
 From these starting data, it does the following for each bone not on the armature's plane of symmetry:
