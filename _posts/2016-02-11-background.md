@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Background
+title: Background: How to get started writing a Blender add-on
 date:   2016-02-11
 ---
 
