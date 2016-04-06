@@ -71,6 +71,7 @@ class RigMirror(bpy.types.Operator):
                 # The symmetrize() operation left the new bones all selected.
                 # Will we need this list? Or just unselect all?
                 new_bones = list(context.selected_pose_bones)
+                print(new_bones)
                 bpy.ops.pose.select_all(action='DESELECT')
                 #pose_bone_collection = list(context.object.pose.bones)
                 #print(pose_bone_collection)
@@ -89,9 +90,8 @@ class RigMirror(bpy.types.Operator):
             suffix = bone.name[-2:]
             new_suffix = self.suffixes.get(suffix)
             if not new_suffix: # i.e. wasn't one of the dict keys
-                #print("No side indication found in name")
                 # Assume it's the lhs that's been constructed even if not labelled
-                print("Bone " + bone.name + " has head at " + str(bone.head) + " and tail at " + str(bone.tail) + " and didn't have a .L/.l or .R/.r suffix")
+                #print("Bone " + bone.name + " has head at " + str(bone.head) + " and tail at " + str(bone.tail) + " and didn't have a .L/.l or .R/.r suffix")
                 prefix = bone.name
                 if bone.tail[0] > 0: # bone tail is on the LHS
                     bone.name = prefix + ".L"
@@ -108,7 +108,7 @@ class RigMirror(bpy.types.Operator):
                 print("There is a naming conflict with an existing bone")
                 return True
             else:
-                print("No naming conflict")
+                #print("No naming conflict")
                 return False
 
     def get_mirrored_name(self, bone):
@@ -129,21 +129,33 @@ class RigMirror(bpy.types.Operator):
         # I think this is going to be much different from (and easier than)
         # what I'd originally planned, because the armature symmetrize operation already
         # does half the work.
-        print(bone.name)
-        # bone is the one to copy the constraint from.
+        print("Bone: " + bone.name)
+        # bone is the one to copy the constraint FROM.
         for constraint in bone.constraints:
-            print(constraint)
-            #if it's limit rotation, want to:
+            print("Constraint: " + str(constraint))
+            if constraint.type == 'LIMIT_ROTATION':
+                print("That's a limit rotation constraint")
+                # If it's limit rotation, want to:
+                # Keep x min and max the same. For y and z local axes,
+                # magnitudes of min and max need to be switched.
+                min_y_orig = constraint.min_y
+                max_y_orig = constraint.max_y
+                min_z_orig = constraint.min_z
+                max_z_orig = constraint.max_z
+                constraint.min_y = -max_y_orig
+                constraint.max_y = -min_y_orig
+                constraint.min_z = -max_z_orig
+                constraint.max_z = -min_z_orig
+            elif constraint.type == 'LIMIT_LOCATION':
+                print("That's a limit location constraint")
+                # If it's limit location, flip the x limits
+                min_x_orig = constraint.min_x
+                max_x_orig = constraint.max_x
+                constraint.min_x =  -max_x_orig
+                constraint.max_x = -min_x_orig
 
-                # Keep x min and max the same
-
-                # ymin should be negative of orig bone's ymax.
-
-        # for each constraint on bone's counterpart,
-        # check if it's a limit rotation constraint.
-        # look at notes to decide what the limits should be like.
         # For now, ignore all other kinds of constraints.
-        # limit location should be easy, IK may not even need modification
+        # I haven't detected any need to modify IK constraints
 
 
 # Register the operator class so it can be used in Blender
