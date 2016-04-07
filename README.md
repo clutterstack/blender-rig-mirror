@@ -14,11 +14,11 @@ From these starting data, it does the following for each bone not on the armatur
 
 
 
-* The builtin Blender operator [`bpy.ops.armature.symmetrize()`](https://www.blender.org/api/blender_python_api_current/bpy.ops.armature.html?highlight=symmetrize#bpy.ops.armature.symmetrize) is used to accomplish the following:
-  * Creates a new bone, mirroring the original bone's position and orientation, with the same root name as the one it's copied from, and adds a suffix to its name to indicate the side it's on.
-  * Sets the new bone's roll to mirror the roll of the complementary bone on the original side.
-  * Sets the new bone's parent to be the mirror complement of the original bone's parent; if the original's parent is along the centre line of the armature, this is the new bone's parent as well.
-  * Copies bone constraints from the original side of the armature to the other. This includes IK constraints, which are copied with targets on the appropriate side of the rig. At this point in the operation of the script, Limit Rotation and Limit Location constraints (and possibly other types) have identical limits on both sides, rather than being mirrored, which would be the desired behaviour in this context.
+* Invokes the builtin Blender operator [`bpy.ops.armature.symmetrize()`](https://www.blender.org/api/blender_python_api_current/bpy.ops.armature.html?highlight=symmetrize#bpy.ops.armature.symmetrize) to accomplish the following:
+  * Create a new bone, mirroring the original bone's position and orientation, with the same root name as the one it's copied from, and add a suffix to its name to indicate the side it's on.
+  * Set the new bone's roll to mirror the roll of the complementary bone on the original side.
+  * Set the new bone's parent to be the mirror complement of the original bone's parent; if the original's parent is along the centre line of the armature, this is the new bone's parent as well.
+  * Copy bone constraints from the original side of the armature to the other. This includes IK constraints, which are copied with targets on the appropriate side of the rig. At this point in the operation of the script, Limit Rotation and Limit Location constraints (and possibly other types) have identical limits on both sides, rather than being mirrored, which would be the desired behaviour in this context.
 
 
 * Changes limits on Limit Rotation and Limit Location constraints so that these constraints are mirrored across the armature's plane of symmetry.
