@@ -1,4 +1,7 @@
-## Dealing with bones on the centre line: a rookie mistake comparing floating-point numbers
+---
+layout: post
+title: "A rookie mistake comparing floating-point numbers"
+---
 
 It appears that the builtin Blender armature symmetrize operation `bpy.ops.armature.symmetrize()` does most of what I wanted to do, so I started a new git branch replacing bits of my own code with that. The builtin mirrors constraints, including IK constraints, very well. It means a lot less code than I expected to have to write.
 
