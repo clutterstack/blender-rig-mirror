@@ -4,15 +4,31 @@ title: Background: How to get started writing a Blender add-on
 date:   2016-02-11
 ---
 
+This post is meant as a resource for others to understand how I, from a position of relative ignorance, gained enough of a foothold on the Blender Python API to write a script that works within Blender, and to draw attention to some of the extensive resources available to those wishing to do something similar.
+
 ## Motivation
 
-While exploring armature building in Blender, I wondered whether there was an easy way to mirror bone constraints from one side of my human rig to the other. I did find two scripts that contained clues.
+While exploring armature-building in Blender, I wondered whether there was an easy way to mirror bone constraints from one side of my human rig to the other.
+
+I found two scripts that contained clues.
 
 The first was the response by prolific Stack Exchange user TLousky to [this question](http://blender.stackexchange.com/questions/41709/how-to-copy-constraints-from-one-bone-to-another) about copying constraints on bones used to control facial shape keys. The script ran all right on my armature, but doesn't adjust the constraint parameters in the way I need for a body rig.
 
 The other result was a Blender add-on called [Pose Mirror](https://developer.blender.org/T36334) by Connor Simpson. It looks as though it copies all the constraints and parameters, making no changes, unless the constraint has a target, in which case it does switch the target to the corresponding object on the correct side.
 
 Neither of the above scripts properly mirrors the Limit Rotation constraints that my human rig is full of, so I decided to look into writing something myself. This work-in-progress is called [blender-rig-mirror](https://github.com/clutterstack/blender-rig-mirror). Check the README for its current state; as of this writing it's not a polished product.
+
+**EDIT 2016-04-06:**
+
+There is a builtin operation `bpy.ops.armature.symmetrize()` which does the following:
+
+* Copies selected bones that have side-indicating name endings (*e.g.* ".l" or "\_L"), from one side of the armature to the other, mirroring the bone rolls and parenting. *This means starting from half an armature, rather than a whole armature with constraints set up on the bones on one side*
+
+* Copies bone constraints from the original side of the armature to the other. This includes IK constraints, which are copied with targets on the appropriate side of the rig. Limit Rotation and Limit Location constraints (and possibly other types) have identical limits on both sides, rather than being mirrored.
+
+This operation does a lot of the heavy lifting that I was looking for, and although I implemented most of it in Python, I ended up replacing much of my code with the builtin one-liner.
+
+**END EDIT**
 
 ## First steps
 
