@@ -166,13 +166,24 @@ class RigMirror(bpy.types.Operator):
         # For now, ignore all other kinds of constraints.
         # I haven't detected any need to modify IK constraints
 
+class RigMirrorPanel(bpy.types.Panel):
+    bl_label = "Rig Mirror"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+
+
+    def draw(self, context):
+        self.layout.label(text="Hello World")
 
 def register():
     bpy.utils.register_class(RigMirror)
 
+    bpy.utils.register_class(RigMirrorPanel)
+
 
 def unregister():
     bpy.utils.unregister_class(RigMirror)
+    bpy.utils.unregister_class(RigMirrorPanel)
 
 
 if __name__ == "__main__":
