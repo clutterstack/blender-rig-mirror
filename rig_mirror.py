@@ -22,6 +22,15 @@
 #
 #  ***** END GPL LICENSE BLOCK *****
 
+bl_info = {
+    "name": "Rig Mirror",
+    "category": "Rigging",
+    "author": "Chris Nicoll",
+    "version": (0, 1),
+    "blender": (2, 76, 0)
+}
+# There is more stuff to put in here.
+
 import bpy
 
 class RigMirror(bpy.types.Operator):
@@ -158,8 +167,19 @@ class RigMirror(bpy.types.Operator):
         # I haven't detected any need to modify IK constraints
 
 
+def register():
+    bpy.utils.register_class(RigMirror)
+
+
+def unregister():
+    bpy.utils.unregister_class(RigMirror)
+
+
+if __name__ == "__main__":
+    register()
+
 # Register the operator class so it can be used in Blender
-bpy.utils.register_class(RigMirror)
+#bpy.utils.register_class(RigMirror)
 
 # Run it
-bpy.ops.object.rig_mirror()
+#bpy.ops.object.rig_mirror()
