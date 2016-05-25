@@ -1,21 +1,17 @@
 ---
 layout: post
-title: ! "Integrating a Python script with Blender, Part 2: Making the operator script into an addon"
+title: ! "Integrating a Python script with Blender, Part 2: Making the operator script into an add-on"
 ---
 
+I'm picking up where I left off after [here is an attempt at an internal link to an earlier post where I got to this starting point]({% post_url 2016-02-23-integrating-part-one %}): with a script that can be run to register an operator in Blender, that can then be called up by name ("Rig Mirror") within the spacebar menu.
 
-We start with a script that can be run to register an operator in Blender, that can then be called up by name within the spacebar menu.
+At the end of this post, the script will be in basic add-on form.
+It will be installed from a file, using the User Preferences Add-ons pane, and it's loaded up each time Blender is started -- the operator is permanently available from the spacebar menu.
 
-[here is an attempt at an internal link to an earlier post where I got to this starting point]({% post_url 2016-02-23-integrating-part-one %})
+## Steps to make the add-on visible in the add-ons panel
 
-At the end of this post, the operator can be loaded from a file, using the Preferences pane, and it's loaded up each time Blender is started -- the operator is permanently available from the spacebar menu.
-
-Putting a button or menu item for the operator into the GUI is left for later.
-
-## Steps to make it visible in the add-ons Panel
-
-Concisely put, at
-[https://wiki.blender.org/index.php/Dev:Py/Scripts/Guidelines/Addons](https://wiki.blender.org/index.php/Dev:Py/Scripts/Guidelines/Addons):
+From
+[the Blender wiki add-on guidelines](https://wiki.blender.org/index.php/Dev:Py/Scripts/Guidelines/Addons):
 
 >"To have your script show up in the Add-Ons panel, it needs to:
 >
@@ -23,11 +19,11 @@ Concisely put, at
 >    * contain a dictionary called "bl_info"
 >    * define register() / unregister() functions. "
 
-These steps are also illustrated at [https://www.blender.org/api/blender_python_api_current/info_tutorial_addon.html](https://www.blender.org/api/blender_python_api_current/info_tutorial_addon.html).
+These steps are also illustrated in a [tutorial in the Blender Python API docs](https://www.blender.org/api/blender_python_api_current/info_tutorial_addon.html), which is more of a walkthrough than a reference.
 
-### bl_info section
+### bl_info dictionary
 
-Add:
+Add the dict:
 
 ```
 bl_info = {
@@ -41,11 +37,10 @@ bl_info = {
 
 to the top of the file.
 
-A list of categories is available at https://wiki.blender.org/index.php/Dev:Py/Scripts/Guidelines/Addons.
+The [guidelines](https://wiki.blender.org/index.php/Dev:Py/Scripts/Guidelines/Addons) contain a useful reference for the possible contents of `bl_info`, as well as more on preparing an add-on for submission to the Blender Foundation.
 
-A lot more items can go into the `bl_info` dict. Before any attempt to submit this add-on, I would check to see what else it needs.
 
-### register/unregister
+### register()/unregister() functions
 
 Add:
 
@@ -57,7 +52,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(RigMirror)
 ```
-to the end of the file.
+to the end of the file. `RigMirror` is the name of my operator class.
 
 Often, after the `register()` and `unregister()` functions, example add-ons contain the lines:
 
@@ -72,4 +67,8 @@ A clear explanation for this is given at  https://wiki.blender.org/index.php/Dev
 
 ## Put the python file in the addons directory
 
-If you can find it (not trivial on Mac OSX). Not strictly necessary. I was able to pull my add-on up in the add-ons browser with "Install from file..." (and selecting my python file). I haven't actually moved the file from my development (and git) directory on my local machine.
+The addons directory is a bit hard to find on my OSX (Yosemite) machine, since it's at `/Users/chris/Library/Application Support/Blender/2.76/scripts/addons`, and for some reason the Library folder is hidden from users by default.
+
+Although it's not too hard to unhide the Library (see, *e.g.* [this thread at Blender Artists](http://blenderartists.org/forum/showthread.php?331685-Adding-Addons-To-Mac)), it's not strictly necessary here. In the add-ons browser, I used "Install from file..." (selecting my python file from my development directory) and Blender put a copy of it into the addons folder.
+
+That's it; my script has been converted to an installable operator. An obvious next step would be to add a button or menu item for the operator to Blender's GUI.

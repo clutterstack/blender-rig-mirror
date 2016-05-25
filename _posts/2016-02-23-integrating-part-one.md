@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Integrating a Python script with Blender, Part 1
+title: ! 'Integrating a Python script with Blender, Part 1: Turning the code into an operator'
 ---
 
 Some exploration of the Blender Python API has left me with a working (though not fully-featured) script. Rather than carry on building and debugging as it is, I want to make sure my code is structured in such a way that it won't be a mess to convert to a Blender Add-on.
