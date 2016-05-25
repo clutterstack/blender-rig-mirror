@@ -3,7 +3,7 @@ layout: post
 title: ! "Integrating a Python script with Blender, Part 2: Making the operator script into an add-on"
 ---
 
-I'm picking up where I left off after [this post](http://clutterstack.github.io/blender-rig-mirror/2016/02/23/integrating-part-one.html): with a script that can be run to register an operator in Blender, that can then be called up by name ("Rig Mirror") within the spacebar menu.
+I'm picking up where I left off after [Integrating a Python script with Blender, Part 1: Turning the code into an operator](http://clutterstack.github.io/blender-rig-mirror/2016/02/23/integrating-part-one.html): with a script that can be run to register an operator in Blender, that can then be called up by name ("Rig Mirror") within the spacebar menu.
 
 At the end of this post, the script will be in basic add-on form.
 It will be installed from a file, using the User Preferences Add-ons pane, and it's loaded up each time Blender is started -- the operator is permanently available from the spacebar menu.
